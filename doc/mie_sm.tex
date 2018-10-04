@@ -1,0 +1,729 @@
+\documentclass[reprint, superscriptaddress]{revtex4-1}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{mathtools}
+\usepackage{upgreek}
+\usepackage[table,usenames,dvipsnames]{xcolor}
+%\usepackage{tikz}
+%\usetikzlibrary{calc}
+\usepackage{hyperref}
+\usepackage{setspace}
+
+\setcitestyle{super}
+
+\hypersetup{
+  colorlinks,
+  linkcolor={blue!80!black},
+  citecolor={green!20!black},
+  urlcolor={blue!80!black}
+}
+
+
+\definecolor{DarkBlue}{RGB}{0,0,64}
+\definecolor{DarkBrown}{RGB}{64,20,10}
+\definecolor{DarkGreen}{RGB}{0,64,0}
+\definecolor{DarkPurple}{RGB}{128,0,84}
+\definecolor{LightGray}{gray}{0.85}
+% annotation macros
+\newcommand{\repl}[2]{{\color{gray} [#1] }{\color{blue} #2}}
+\newcommand{\add}[1]{{\color{blue} #1}}
+\newcommand{\del}[1]{{\color{gray} [#1]}}
+\newcommand{\note}[1]{{\color{DarkGreen}\footnotesize \textsc{Note.} #1}}
+
+\newcommand{\MI}{\mathcal I} % mutual information
+
+\begin{document}
+\title{Supporting Materials for Bias of the configuration entropy estimated from counting-based methods}
+
+% Please edit the author list
+
+%\author{Justin A. Drake}
+%\affiliation{
+%Sealy Center for Structural Biology and Molecular Biophysics,
+%The University of Texas Medical Branch,
+%Galveston, Texas 77555-0304, USA}
+%\author{Danielle D. Seckfort}
+%\affiliation{
+%Quantitative and Computational Biosciences,
+%Baylor College of Medicine, Houston, Texas 77030, USA}
+%\author{Omneya Nassar}
+%\affiliation{
+%Sealy Center for Structural Biology and Molecular Biophysics,
+%The University of Texas Medical Branch,
+%Galveston, Texas 77555-0304, USA}
+%\author{B. Montgomery Pettitt}
+%\email{mpettitt@utmb.edu}
+%\affiliation{
+%Sealy Center for Structural Biology and Molecular Biophysics,
+%The University of Texas Medical Branch,
+%Galveston, Texas 77555-0304, USA}
+%\affiliation{
+%Quantitative and Computational Biosciences,
+%Baylor College of Medicine, Houston, Texas 77030, USA}
+
+\maketitle
+
+
+\appendix
+
+\section{\label{sec:MIE_review}
+Mutual information expansion}
+
+The MIE method is based on the idea of
+the Kirkwood superposition approximation (KAS)\cite{kirkwood1935, born1946},
+or that of interaction information\cite{mcgill1954}.
+%
+Below, we will discuss the idea and its application to MIE.
+
+\subsection{\label{sec:Kirkwood}
+Kirkwood superposition approximation}
+
+We first recall that the (dimensionless) potential of mean force (PMF)
+is defined for a distribution, $p(\alpha)$,
+as
+$$
+W(\alpha) = -\ln p(\alpha) = \ln\left[ \frac{1}{p(\alpha)} \right].
+$$
+The PMF can be interpreted as
+the free energy of confining the ensemble to a single state,
+or the amount of work
+(in the unit of $k_B \, T$'s, with $T$ being the temperature)
+required to transfer an average system randomly drawn from the ensemble (of probability $1$)
+to state $\alpha$ [of probability $p(\alpha)$].
+%
+We can now rewrite Eq.~\eqref{eq:entropy_def} as
+%
+\begin{equation}
+  \frac{S}{k_B}
+  =
+  \sum_{\alpha = 1}^M p(\alpha) \, W(\alpha)
+  =
+  \overline{ W(\alpha) }
+  ,
+  \label{eq:S_W}
+\end{equation}
+%
+which shows that the configuration entropy
+is the mean PMF.
+%
+The superposition approximation is based on the intuition
+that for a physical or extensive system composed of
+multiple loosely-coupled DOFs,
+the PMF of the entire system is largely
+the sum of the marginal PMFs of individual DOFs.
+
+Consider a many-body system of $n$ DOFs.
+%
+We label the DOFs numerically, $1, \dots, n$,
+and specify the state as $\alpha = (\alpha_1, \dots, \alpha_n)$.
+%
+%For simplicity, we will assume that the degrees of freedom are identical.
+%
+For a subset of DOFs, $I = \{i, j, \dots\}$,
+we denote the joint distribution by $p_I(\alpha_I)$,
+and define the joint PMF as
+%
+\begin{equation}
+  W_I(\alpha_I) = -\ln p_I(\alpha_I)
+  .
+  \label{eq:WI_def}
+\end{equation}
+%
+For example,
+the marginal PMF of a single DOF $i$ is given by $W_i$ (omitting the argument),
+the joint PMF of a pair $\{i, j\}$ by $W_{i, j}$
+(dropping the braces ``$\{$'' and ``$\}$'' in the subscript, same below),
+that of a triplet $\{i, j, k\}$ by $W_{i, j, k}$, etc.
+
+Now by assuming that the DOFs are largely independent,
+we can write the PMF of a pair $\{i, j\}$
+as the sum of the marginal PMFs of the two individual DOFs $i$ and $j$
+and a hopefully small two-body correction, $\delta W_{i,j}$,
+%
+\begin{equation}
+  W_{i,j}(\alpha_i, \alpha_j)
+  =
+  W_i(\alpha_i) + W_j(\alpha_j)
+  + \delta W_{i,j}(\alpha_i, \alpha_j)
+  .
+  \label{eq:W_ij}
+\end{equation}
+%
+Similarly, for a triplet, $\{i, j, k\}$,
+we can define the three-body correction, $\delta W_{i,j,k}$, via
+%
+\begin{align}
+  &W_{i,j,k}(\alpha_i, \alpha_j, \alpha_k)
+  =
+  W_i(\alpha_i) + W_j(\alpha_j) + W_k(\alpha_k)
+  \notag \\
+  &\quad
+  + \delta W_{i,j}(\alpha_i, \alpha_j)
+  + \delta W_{j,k}(\alpha_j, \alpha_k)
+  + \delta W_{k,i}(\alpha_k, \alpha_i)
+  \notag \\
+  &\quad
+  + \delta W_{i,j,k}(\alpha_i, \alpha_j, \alpha_k)
+  .
+  \label{eq:W_ijk}
+\end{align}
+%
+
+
+Generally, we can define the PMF correction, $\delta W_I$,
+for an arbitrary set of DOFs, $I$,
+implicitly through the recurrence relation,
+%
+\begin{equation}
+  W_I(\alpha_I)
+  =
+  \sum_{J \subseteq I}
+  \delta W_J(\alpha_J)
+  ,
+  \label{eq:WI_dWJ}
+\end{equation}
+%
+where the sum goes through all subsets $J$'s of $I$,
+and we have defined
+$\delta W_\emptyset \equiv W_\emptyset \equiv 0$
+for the empty set $\emptyset$.
+%
+Note that in this definition,
+$\delta W_i \equiv W_i$
+for a single DOF $i$.
+%
+We can readily verify that
+Eqs.~\eqref{eq:W_ij} and \eqref{eq:W_ijk}
+are special cases of Eq.~\eqref{eq:WI_dWJ}
+
+As Eq.~\eqref{eq:WI_dWJ} is a linear relation,
+by using the inclusion-exclusion principle\cite{bjorklund2007},
+we can invert it to get an explicit definition of $\delta W_J$\footnote{
+  We can verify Eq.~\eqref{eq:dWJ_WI}
+  by a direct expansion using Eq.~\eqref{eq:WI_dWJ}.
+  %
+  Consider a particular subset $K \subseteq J$.
+  Let us compute the contribution of $\delta W_K$
+  to the right-hand side of Eq.~\eqref{eq:dWJ_WI}.
+  %
+  Note that $\delta W_K$ contributes only to those terms
+  whose $I$ is a superset of $K$,
+  and the contribution coefficient is $(-1)^{|J|-|I|}$.
+  %
+  If $K$ is strict subset of $J$,
+  then there is at least one component $j^*$ that belongs to $J$
+  but not to $K$,
+  and all supersets, $I$'s,
+  satisfying the above condition, and that given by Eq.~\eqref{eq:dWJ_WI},
+  $K \subseteq I \subseteq J$,
+  can be partitioned to two equally populated groups,
+  according to whether the $I$ has $j^*$ or not.
+  %
+  However, because the corresponding members of the two groups
+  contribute the same value with opposite signs to the sum,
+  the total contribution is zero.
+  %
+  This means $\delta W_K$ can contribute to the right-hand side
+  if and only if $K = J$, and the contribution is $1 \cdot W_J$,
+  as intended.
+}
+%
+\begin{equation}
+  \delta W_J(\alpha_J)
+  =
+  \sum_{I \subseteq J}
+  (-1)^{|J| - |I|}
+  W_I(\alpha_I)
+  ,
+  \label{eq:dWJ_WI}
+\end{equation}
+%
+where $|I|$ denotes the size of subset $I$.
+%
+Below we will refer to the subset sizes, $|I|$ and $|J|$,
+as the orders of $W_I(\alpha_I)$ and $\delta W_J(\alpha_J)$.
+%
+For example, we have, for a pair, $\{i, j\}$,\footnote{
+  Just as we define the PMFs, $W_I$'s, from the joint distributions
+  through Eq.~\eqref{eq:WI_def},
+  we can associate the corrections, $\delta W_I$'s,
+  with the (excess) correlation functions, $g_I$'s, as
+  %
+  $$
+  g_I(\alpha_I) \equiv e^{-\delta W_I(\alpha_I)}
+  .
+  $$
+  %
+  This definition is consistent with the usual definition
+  of the pair correlation function (as in liquid state theory\cite{hansen}),
+  $g_{i,j}(\alpha_i, \alpha_j)$ for a pair, $\{i, j\}$,
+  $$
+    g_{i,j}(\alpha_i, \alpha_j)
+    =
+    \frac{ p_{i,j}(\alpha_i, \alpha_j) } { p_i(\alpha_i) \, p_j(\alpha_j) }
+    .
+  $$
+  Similarly, for a triplet, $\{i, j, k\}$, we have
+  $$
+  g_{i,j,k}(\alpha_i, \alpha_j, \alpha_k)
+  =
+  \frac{ p_{i,j,k}(\alpha_i, \alpha_j \, \alpha_k) \, p_i(\alpha_i) \, p_j(\alpha_j) \, p_k(\alpha_k) }{ p_{i,j}(\alpha_i, \alpha_j) \, p_{j,k}(\alpha_j, \alpha_k) \, p_{k,i}(\alpha_k, \alpha_i) }
+  .
+  $$
+}
+%
+\begin{equation}
+  \delta W_{i,j}(\alpha_i, \alpha_j)
+  =
+  W_{i,j}(\alpha_i, \alpha_j)
+  - W_{i}(\alpha_i) - W_{j}(\alpha_j)
+  ,
+  \label{eq:dWij}
+\end{equation}
+%
+or, for a triplet, $\{i, j, k\}$,
+%
+\begin{align}
+  &\delta W_{i,j,k}(\alpha_i, \alpha_j, \alpha_k)
+  =
+  W_{i,j,k}(\alpha_i, \alpha_j, \alpha_k)
+  \notag\\
+  &\quad
+  - W_{i,j}(\alpha_i, \alpha_j)
+  - W_{j,k}(\alpha_j, \alpha_k)
+  - W_{k,i}(\alpha_k, \alpha_i)
+  \notag\\
+  &\quad
+  + W_i(\alpha_i)
+  + W_j(\alpha_j)
+  + W_k(\alpha_k)
+  .
+  \label{eq:dWijk}
+\end{align}
+
+
+
+
+Without a priori assumption on the magnitudes of the corrections,
+Eqs.~\eqref{eq:WI_dWJ} and \eqref{eq:dWJ_WI} are exact relations
+that serve only as the mathematical definition of $\delta W_I$.
+%
+However, its practical value lies in that in many cases
+with largely independent DOFs,
+we can often assume
+that the corrections of larger subsets are negligible
+so that a high-order PMF of many DOFs can be approximately constructed
+from a linear superposition of a few low-order ones.
+
+
+If we can assume the corrections, $\delta W_J$'s,
+for orders greater than $k$ are negligible,
+%
+\begin{equation}
+  \delta W_J(\alpha_J) = 0
+  \qquad
+  \mbox{for $|J| \ge k$}
+  ,
+  \notag
+  %\label{eq:mie_trunc}
+\end{equation}
+%
+we can then approximate Eq.~\eqref{eq:WI_dWJ} as
+%
+\begin{equation}
+  W_I(\alpha_I)
+  =
+  \sum_{ \substack{J \subseteq I, \; |J| \le k} }
+  \!\! \delta W_J(\alpha_J)
+  .
+  \label{eq:WI_dWJ_MIE}
+\end{equation}
+%
+Since Eq.~\eqref{eq:WI_dWJ_MIE}
+is equivalent to Eq.~\eqref{eq:WI_dWJ}
+for $|I| \le k$,
+the inversion is still given by Eq.~\eqref{eq:dWJ_WI} for $|J| \le k$.
+%%
+%\begin{equation}
+%  \delta W_J(\alpha_J)
+%  =
+%  \begin{dcases}
+%    \sum_{ I \subseteq J }
+%    (-1)^{|J| - |I|} W_I(\alpha_I)
+%    &\mbox{for $|J| \le k$}
+%    ,
+%    \\
+%    0
+%    &\mbox{for $|J| > k$}
+%    .
+%  \end{dcases}
+%  \label{eq:dWJ_WI_MIE}
+%\end{equation}
+
+In practice, we will treat the lower-order $W_I(\alpha_I)$'s
+for $|I| \le k$ as the independent variables,
+which are to be estimated from the data collected in simulation trajectories,
+%
+and use them to deduce the corrections,
+$\delta W_J(\alpha_J)$'s of $|J| \le k$ from Eq.~\eqref{eq:dWJ_WI}.
+%
+Then, we can use these lower-order corrections
+to construct higher-order PMFs, $W_I(\alpha_I)$'s,
+by superposition using Eq.~\eqref{eq:WI_dWJ_MIE}.
+
+For example,
+in the second-order approximation,
+we assume that
+$\delta W_{i, j, k} = \delta W_{i,j,k, l} = \cdots = 0$.
+%
+Then, $\delta W_{i,j}$ is given by Eq.~\eqref{eq:dWij}.
+The triplet PMF is expressed as a superposition
+of the pair and marginal PMFs according to Eq.~\eqref{eq:W_ijk},
+%$$
+%W_{i, j, k} = W_{i,j} + W_{j,k} + W_{k,i} - W_i - W_j - W_k.
+%$$
+\begin{align*}
+W_{i,j,k}(\alpha_i, \alpha_j, \alpha_k)
+=
+W_{i,j}(\alpha_i, \alpha_j) + W_{j,k}(\alpha_j, \alpha_k)\\
+  + W_{k,i}(\alpha_k, \alpha_i)
+  - W_i(\alpha_i) - W_j(\alpha_j) - W_k(\alpha_k)
+.
+\end{align*}
+%
+This result can also be obtained from Eq.~\eqref{eq:dWijk} with $\delta W_{i,j,k}$ set to zero.
+%
+Written in terms of the distributions, $p_I(\alpha_I)$'s,
+[cf. Eq.~\eqref{eq:WI_def}], the above relation gives
+%
+$$
+p_{i,j,k}(\alpha_i, \alpha_j, \alpha_k)
+=
+\frac{ p_{i,j}(\alpha_i, \alpha_j) \, p_{j,k}(\alpha_j, \alpha_k) \, p_{k,i}(\alpha_k, \alpha_i) }{ p_i(\alpha_i) \, p_j(\alpha_j) \, p_k(\alpha_k) }
+,
+$$
+which recovers the classical version of the superposition approximation\cite{kirkwood1935, born1946}.
+\note{Eq.~(4.6) in \cite{born1946}.}
+
+
+
+\subsection{Mutual information expansion (MIE)}
+
+
+The MIE method uses the above framework to derive approximate expressions of the entropy.
+%
+Let us first define, in analogy to Eq.~\eqref{eq:S_W},
+the marginal entropies and their corrections for subsets as
+%
+\begin{align*}
+  S_I
+  &= k_B \, \overline{ W_I(\alpha_I) }
+  ,
+  \\
+  \delta S_J
+  &= k_B \, \overline{ \delta W_J(\alpha_J) }
+  ,
+\end{align*}
+%
+Using Eq.~\eqref{eq:WI_dWJ_MIE} in Eq.~\eqref{eq:S_W},
+we get an expression for the entropy for the $k$th-order MIE,
+\begin{equation}
+  S
+  =
+  \sum_{|J| \le k} \delta S_J
+  =
+  k_B \,
+  \sum_{|J| \le k} \overline{ \delta W_J(\alpha_J) }
+  ,
+  \label{eq:ent_MIE1}
+\end{equation}
+where $J$ goes through all subsets of $\{1, \dots, n\}$ satisfying $|J| \le k$,
+and $\delta W_J(\alpha_J)$ can be computed from Eq.~\eqref{eq:dWJ_WI}.
+
+Conventionally, the sum in Eq.~\eqref{eq:ent_MIE1}
+is arranged by the subset size as
+\begin{equation}
+  \frac{S}{k_B}
+  =
+  \sum_{j = 1}^k (-1)^{j-1} \MI_j
+  ,
+  \notag
+  %\label{eq:S_MIE}
+\end{equation}
+%
+where the $j$th-order mutual or interaction information, $\MI_j$, is defined as
+%
+\begin{align}
+  \MI_j
+  &\equiv (-1)^{j-1} \sum_{|J| = j}
+  \delta S_J / k_B
+  %\overline{ \delta W_J(\alpha_J) }
+  %\notag \\
+  %&=
+  %\sum_{ |I| \le j }
+  %(-1)^{|I| - 1}
+  %{n - |I| \choose j - |I|}
+  %\, \frac{S_I}{k_B}
+  .
+  \notag
+  %\label{eq:MI_comb}
+\end{align}
+%$$
+%\frac{ S_I } { k_B } \equiv \overline{ W_I(\alpha_I) }.
+%$$
+%
+%Thus, Eq.~\eqref{eq:MI_comb} shows that
+%the mutual information is a linear combination of
+%the entropies of the subsets.
+
+%Using Eq.~\eqref{eq:dWJ_WI}, we have for $j \le k$,
+%\begin{align}
+%  \MI_j
+%  &=
+%  \sum_{ |J| = j }
+%  \sum_{ I \subseteq J }
+%  (-1)^{|I| - 1}
+%  \, \overline{ W_I(\alpha_I) }
+%  \notag \\
+%  &=
+%  \sum_{ |I| \le j }
+%  (-1)^{|I| - 1}
+%  {n - |I| \choose j - |I|}
+%  \, \overline{ W_I(\alpha_I) }
+%  ,
+%  \label{eq:MIj_expansion}
+%\end{align}
+%%
+%where the appearance of the binomial coefficient
+%is due to the number of ways of forming
+%a size-$j$ superset of $I$,
+%which is given by the number of ways of choosing
+%$j - |I|$ DOFs out of the $n - |I|$ remaining DOFs.
+%
+%Using Eq.~\eqref{eq:MIj_expansion} in Eq.~\eqref{eq:S_MIE} yields
+%%
+%\begin{align}
+%  \frac{S}{k_B}
+%  &=
+%  \sum_{j=1}^k
+%  \sum_{|I| \le j}
+%  (-1)^{j - |I|}
+%  {n - |I| \choose j - |I|}
+%  \, \overline{ W_I(\alpha_I) }
+%  \notag\\
+%  &=
+%  \sum_{|I| \le k}
+%  (-1)^{ k - |I| }
+%  {n - |I| - 1 \choose k - |I|}
+%  \, \overline{ W_I(\alpha_I) }
+%  ,
+%  \notag
+%  %\label{eq:S_MIE_expansion}
+%\end{align}
+%%
+%where we have used the combinatorial identity
+%$$
+%\sum_{r = 0}^R (-1)^r \, {m \choose r}
+%=
+%(-1)^R \, {m - 1 \choose R},
+%$$
+%where $0 \le R \le m$, and we have defined ${-1 \choose 0} \equiv 1$.
+%\note{ See, for example, \url{https://en.wikipedia.org/wiki/Binomial\_coefficient\#Partial\_sums} }
+
+
+From Eq.~\eqref{eq:dWJ_WI},
+we can see that the mutual information, $\MI_j$, is just a linear combination
+of the entropies, $S_I$'s,
+of the subsets, $I$'s, of size no greater than $j$.
+%
+If we estimate $S_I$ using the direct counting method
+by counting the occurrences in the subspace of $\alpha_I$ as
+$$
+\hat S_I = - k_B \sum_{\alpha_I} \hat p(\alpha_I) \, \ln \hat p(\alpha_I),
+$$
+the result, $\hat S_I$, would also suffer from the bias discussed
+in Sec.~\ref{sec:fsbias}, and thus should be corrected accordingly.
+%
+As the subspace of $\alpha_I$ is the direct product of
+the individual spaces of all elements in $I$,
+its size, $M_I = \prod_{i \in I} M_i$
+(with $M_i$ being the number of possibilities for the $i$th DOF),
+grows exponentially with the size of $I$.
+%
+Thus, according to Eq.~\eqref{eq:Shat_ave},
+the bias in uncorrected result would be much more noticeable
+in a higher-order MIE.
+
+
+
+
+\section{\label{sec:Potts}
+Potts model
+}
+
+Here we give details of the Potts model used in our numerical tests.
+%
+This model consists of $n$ spins that spread evenly on a line.
+%
+Each spin, $s_i$, can assume one of the $q$ states with equal probability.
+%
+The Hamiltonian is given by
+$$
+H = -J \sum_{i = 1}^{n-1} s_i \, s_{i+1}.
+$$
+
+This model is analytically solvable. % because of its linear structure.
+%
+The partition function is given by
+$Z_n = q \, (r + q)^{n-1}$,
+where $r = e^{\beta \, J} - 1$.
+%
+The transition matrix between two neighboring sites is
+$T_{i,i+1}(t_1, t_2) = r \, \delta_{t_1, t_2} + 1$.
+%
+The correlation between two spins $k$ sites apart
+can be derived from the $k$th-order transition matrix,
+which is the $k$th power of the above transition matrix
+for nearest neighbors:
+$$
+T_{i,i+k}(t_1, t_2) = r^k \, \delta_{t_1, t_2}
++ \frac{ (r + q)^k - r^k } { q }.
+$$
+The joint distribution of two spins of $k$ sites apart, $i$ and $j = i+k$,
+is then given by
+\begin{equation}
+p_{i, j}(t_1, t_2) = T_{i, j}(t_1, t_2) / Z_{k+1},
+  \label{eq:Potts_pij}
+\end{equation}
+and the conditional probability of $s_j$ assuming the value of $t_2$
+given that $s_i = t_1$ is
+$$
+p\left(s_j = t_2 \middle| s_i = t_1 \right) = \frac{ p_{i, j}(t_1, t_2) } { 1/q }.
+$$
+Because of the linear structure,
+the joint distribution of $m$ sites, $i_1, i_2, \dots, i_m$
+($i_1 < i_2 < \cdots < i_m$),
+can be derived from a product of conditional probabilities
+\begin{align}
+  &p_{i_1, \dots, i_m}(t_1,\dots,t_m)\
+  \notag\\
+  &\qquad
+  = p_{i_1, i_2}(t_1,t_2) \,
+  p(s_{i_3} = t_3 | s_{i_2} = t_2)
+  \notag\\
+  &\qquad \qquad \quad \cdots
+  p(s_{i_{m}} = t_{m} | s_{i_{m-1}} = t_{m-1})
+  \notag\\
+  &\qquad
+  =
+  q^{m-2} \, p_{i_1, i_2}(t_1,t_2) \cdots p_{i_{m-1}, i_m}(t_{m-1}, t_m)
+  ,
+  \label{eq:Potts_jointp}
+\end{align}
+
+
+From the above results, we can derive the exact entropy
+and the values we expect to obtain from the MIE method.
+%
+First, for a pair of spins $k$ sites apart,
+the entropic correction can be deduced from Eq.~\eqref{eq:Potts_pij} as
+\begin{align}
+  \delta S_{i, i+k}
+  &=
+  -k_B \left[
+    (1 - q^{-1}) \, A_k \ln A_k
+  + q^{-1} \, B_k \ln B_k \right]
+  \notag\\
+  &=
+  -\frac{k_B}{2} (q-1) R^{2k}
+  +\mathcal{O}(R^{3k})
+ ,
+\end{align}
+where
+$A_k = 1 - R^k$,
+$B_k = 1 + (q-1) R^k$,
+and $R = r/(r+q)$.
+%
+This result shows the pair correction is of the order of magnitude of $R^k$.
+%
+Next, from Eq.~\eqref{eq:Potts_jointp},
+we have for $m$ sites,
+$i_1$, $i_2$, \dots, $i_m$ ($i_1 < i_2 < \cdots < i_m$),
+\begin{align}
+S_{i_1, \dots, i_m}
+  &= - k_B \, \overline{\ln p_{i_1,\dots, i_m}}
+  \notag\\
+  &= S_{i_1,i_2} + \cdots + S_{i_{m-1},i_m} - (m-2) \, k_B \, \ln q
+  \notag\\
+  &= \delta S_{i_1,i_2} + \cdots + \delta S_{i_{m-1},i_m} + m \, k_B \, \ln q
+  .
+  \label{eq:Potts_jointS}
+\end{align}
+%
+By induction, we can show that
+%
+\begin{equation}
+  \delta S_{i_1, i_2, \dots, i_m} = (-1)^m \delta S_{i_1, i_m}.
+  \label{eq:Potts_jointdS}
+\end{equation}
+%
+We can obtain the exact entropy of the system
+by applying Eq.~\eqref{eq:Potts_jointS} to all sites:
+\begin{align*}
+  S =
+  n \, k_B \, \ln q
+  + \sum_{i=1}^{n-1} \delta S_{i,i+1}
+  ,
+\end{align*}
+which is the sum of the marginal entropies of the $n$ sites
+and the pair corrections of nearest neighbors.
+%
+This result, however, is different from that from the second-order MIE,
+because the latter also includes pair corrections
+of non-neighboring sites, i.e.,
+$$
+S^{(2)} = S + \sum_{i, j \ge i+2} \delta S_{i, j}
+,
+$$
+which shows the error of second-order MIE is $\mathcal O(R^4)$.
+By Eq.~\eqref{eq:Potts_jointdS}, we can further show that
+for the $m$th order\footnote{
+  For two spins $i$ and $j = i + k$ that are $k$ sites apart (assuming $k \ge m$),
+  the contribution of $\delta S_{i, j}$ to the $m$th-order MIE
+  can be computed as follows.
+  %
+  In the 2nd order, it is taken into account once for the pair $i$ and $j$.
+  %
+  In the 3rd order, it also contributes via the $k-1$ triplets, namely,
+  $\{i, i+1, j\}, \dots, \{i, j-1, j\}$,
+  and each with a negative sign [because $\delta S_{i,i_1,j} = -\delta S_{i,j}$,
+  according to Eq.~\eqref{eq:Potts_jointdS}].
+  %
+  Generally, in the $m$th order,
+  it contributes via the ${k-1 \choose m-2}$ unordered $m$-tuples
+  with a sign of $(-1)^m$,
+  where the binomial coefficient represents the number of ways
+  of selecting the $m-2$ middle spins from the $k-1$ spins
+  between spins $i$ and $j$.
+  %
+  The total contribution is thus
+  $1 - {k-1 \choose 1} + {k-1 \choose 2} - \cdots + (-1)^{m}{k-1 \choose m-2}
+  = (-1)^m {k-2 \choose m-2}$.
+}
+%
+$$
+S^{(m)} = S + \sum_{i, j \ge i+m} (-1)^m {j-i-2 \choose m-2} \, \delta S_{i,j}
+,
+$$
+and thus the error of the $m$-order MIE is $\mathcal O(R^{2m})$.
+%
+This suggests that the MIE method would reach convergence
+for this linear system when $R < 1$, or when the temperature is sufficiently high.
+%
+However, it can be more difficult to reach convergence along the order
+for higher-dimensional or more complex systems.\cite{goethe2017}
+
+
+\bibliography{simul}
+\end{document}
